@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package cognitive_mdm.entity.v1;
+
+option python_package = "shared.generated.entity_pb2";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// =============================================================
+// Entity Resolution Service gRPC API
+// =============================================================
+
+service EntityResolutionService {
+  // Find duplicates for a given entity
+  rpc FindDuplicates(FindDuplicatesRequest) returns (FindDuplicatesResponse);
+
+  // Resolve (merge) a set of entities into a golden record
+  rpc ResolveEntities(ResolveEntitiesRequest) returns (ResolveEntitiesResponse);
+
+  // Score similarity between two entities
+  rpc ScoreSimilarity(ScoreSimilarityRequest) returns (ScoreSimilarityResponse);
+
+  // Stream resolution events
+  rpc StreamResolutionEvents(StreamRequest) returns (stream ResolutionEvent);
+
+  // Batch resolve a list of entities
+  rpc BatchResolve(BatchResolveRequest) returns (stream BatchResolveProgress);
+}
+
+message EntityProto {
+  string id = 1;
+  string entity_type = 2;
+  string status = 3;
+  google.protobuf.Struct fields = 4;
+  repeated string tags = 5;
+  float trust_score = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message FindDuplicatesRequest {
+  string entity_id = 1;
+  float threshold = 2;
+  int32 limit = 3;
+  repeated string methods = 4;   // exact, fuzzy, semantic, llm
+}
+
+message DuplicateCandidate {
+  string entity_id = 1;
+  float similarity_score = 2;
+  float confidence = 3;
+  string method = 4;
+  repeated string matching_fields = 5;
+  string rationale = 6;
+}
+
+message FindDuplicatesResponse {
+  string entity_id = 1;
+  repeated DuplicateCandidate candidates = 2;
+  float query_time_ms = 3;
+}
+
+message ResolveEntitiesRequest {
+  repeated string entity_ids = 1;
+  string method = 2;
+  bool dry_run = 3;
+  map<string, string> survivorship_rules = 4;
+}
+
+message ResolveEntitiesResponse {
+  string golden_record_id = 1;
+  repeated string merged_ids = 2;
+  float confidence = 3;
+  google.protobuf.Struct survivorship_map = 4;
+  bool dry_run = 5;
+}
+
+message ScoreSimilarityRequest {
+  EntityProto entity_1 = 1;
+  EntityProto entity_2 = 2;
+  repeated string methods = 3;
+}
+
+message FieldSimilarity {
+  string field_name = 1;
+  float score = 2;
+  string method = 3;
+}
+
+message ScoreSimilarityResponse {
+  float overall_score = 1;
+  float confidence = 2;
+  repeated FieldSimilarity field_scores = 3;
+  bool is_duplicate = 4;
+  string recommendation = 5;
+}
+
+message StreamRequest {
+  repeated string entity_types = 1;
+  float min_confidence = 2;
+}
+
+message ResolutionEvent {
+  string event_type = 1;
+  string entity_id = 2;
+  google.protobuf.Struct payload = 3;
+  google.protobuf.Timestamp occurred_at = 4;
+}
+
+message BatchResolveRequest {
+  repeated string entity_ids = 1;
+  float auto_merge_threshold = 2;
+  float review_threshold = 3;
+}
+
+message BatchResolveProgress {
+  int32 processed = 1;
+  int32 total = 2;
+  int32 merged = 3;
+  int32 flagged_for_review = 4;
+  string current_entity_id = 5;
+  bool complete = 6;
+}

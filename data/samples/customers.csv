@@ -1,0 +1,11 @@
+id,name,email,phone,address,city,country,company,tax_id,status
+cust-001,Acme Corporation,contact@acme.com,+1-555-0100,123 Main St,New York,US,Acme Corp Inc,US-123456789,active
+cust-002,ACME Corp,info@acmecorp.com,555-0100,123 Main Street,New York,United States,Acme Corporation,US123456789,active
+cust-003,Global Pharma Ltd,procurement@globalpharma.com,+44-20-7946-0958,10 Canary Wharf,London,GB,Global Pharmaceuticals,GB987654321,active
+cust-004,TechVentures Inc,hello@techventures.io,+1-415-555-0199,456 Market St,San Francisco,US,Tech Ventures Inc,US-987654321,active
+cust-005,Apex Manufacturing,orders@apexmfg.com,+1-312-555-0177,789 Industrial Blvd,Chicago,US,Apex Manufacturing Corp,US-456789123,active
+cust-006,John Smith,john.smith@email.com,555-1234,45 Oak Avenue,Boston,US,,SSN-123-45-6789,individual
+cust-007,Jane Doe,jane.doe@company.org,+1-617-555-9876,78 Elm Street,Boston,US,Doe Consulting,,individual
+cust-008,Sunrise Healthcare,billing@sunrisehealth.com,+1-303-555-0144,321 Medical Center Dr,Denver,US,Sunrise Healthcare Systems,US-321654987,active
+cust-009,sunrise healthcare,billing@sunrise-health.com,303.555.0144,321 Medical Centre Drive,Denver,US,Sunrise Health,321654987,active
+cust-010,Pacific Imports LLC,imports@pacific.com,+1-206-555-0188,999 Harbor View,Seattle,US,Pacific Imports,US-654321789,active

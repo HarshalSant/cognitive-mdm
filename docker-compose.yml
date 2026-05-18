@@ -1,0 +1,327 @@
+version: "3.9"
+
+# ============================================================
+# CognitiveMDM — Full Stack Docker Compose
+# ============================================================
+
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  networks:
+    - cognitive-net
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+x-python-defaults: &python-defaults
+  <<: *service-defaults
+  env_file:
+    - .env
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    kafka:
+      condition: service_healthy
+
+services:
+
+  # ─────────────────────────────────────────
+  # INFRASTRUCTURE
+  # ─────────────────────────────────────────
+
+  postgres:
+    <<: *service-defaults
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: cognitive_mdm
+      POSTGRES_USER: ${POSTGRES_USER:-mdm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mdmpassword}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./shared/schemas/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mdm}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  neo4j:
+    <<: *service-defaults
+    image: neo4j:5.15-community
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-neo4jpassword}
+      NEO4J_PLUGINS: '["apoc", "graph-data-science"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*,gds.*
+      NEO4J_dbms_memory_heap_initial__size: 512m
+      NEO4J_dbms_memory_heap_max__size: 2g
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - neo4j-plugins:/plugins
+      - ./shared/schemas/neo4j:/import
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+
+  qdrant:
+    <<: *service-defaults
+    image: qdrant/qdrant:v1.7.4
+    volumes:
+      - qdrant-data:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:6333/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    <<: *service-defaults
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  zookeeper:
+    <<: *service-defaults
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+
+  kafka:
+    <<: *service-defaults
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 168
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+
+  kafka-ui:
+    <<: *service-defaults
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: cognitive-mdm
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    ports:
+      - "8080:8080"
+
+  # ─────────────────────────────────────────
+  # SERVICES
+  # ─────────────────────────────────────────
+
+  api-gateway:
+    <<: *python-defaults
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      SERVICE_NAME: api-gateway
+      ENTITY_RESOLUTION_URL: http://entity-resolution:8002
+      SEMANTIC_ENGINE_URL: http://semantic-engine:8003
+      GRAPH_SERVICE_URL: http://graph-service:8004
+      GOVERNANCE_SERVICE_URL: http://governance-service:8005
+      AGENT_SERVICE_URL: http://agent-service:8006
+      COPILOT_SERVICE_URL: http://copilot-service:8007
+    depends_on:
+      - entity-resolution
+      - semantic-engine
+      - graph-service
+      - governance-service
+
+  ingestion-service:
+    <<: *python-defaults
+    build:
+      context: ./services/ingestion-service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      SERVICE_NAME: ingestion-service
+    volumes:
+      - ./data:/app/data
+
+  entity-resolution:
+    <<: *python-defaults
+    build:
+      context: ./services/entity-resolution
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      SERVICE_NAME: entity-resolution
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+
+  semantic-engine:
+    <<: *python-defaults
+    build:
+      context: ./services/semantic-engine
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    environment:
+      SERVICE_NAME: semantic-engine
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+    volumes:
+      - model-cache:/root/.cache/huggingface
+
+  graph-service:
+    <<: *python-defaults
+    build:
+      context: ./services/graph-service
+      dockerfile: Dockerfile
+    ports:
+      - "8004:8004"
+    environment:
+      SERVICE_NAME: graph-service
+      NEO4J_URI: bolt://neo4j:7687
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+  governance-service:
+    <<: *python-defaults
+    build:
+      context: ./services/governance-service
+      dockerfile: Dockerfile
+    ports:
+      - "8005:8005"
+    environment:
+      SERVICE_NAME: governance-service
+
+  agent-service:
+    <<: *python-defaults
+    build:
+      context: ./services/agent-service
+      dockerfile: Dockerfile
+    ports:
+      - "8006:8006"
+    environment:
+      SERVICE_NAME: agent-service
+      ENTITY_RESOLUTION_URL: http://entity-resolution:8002
+      SEMANTIC_ENGINE_URL: http://semantic-engine:8003
+      GRAPH_SERVICE_URL: http://graph-service:8004
+      GOVERNANCE_SERVICE_URL: http://governance-service:8005
+
+  copilot-service:
+    <<: *python-defaults
+    build:
+      context: ./services/copilot-service
+      dockerfile: Dockerfile
+    ports:
+      - "8007:8007"
+    environment:
+      SERVICE_NAME: copilot-service
+      GRAPH_SERVICE_URL: http://graph-service:8004
+      SEMANTIC_ENGINE_URL: http://semantic-engine:8003
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+
+  frontend:
+    <<: *service-defaults
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+    depends_on:
+      - api-gateway
+
+  # ─────────────────────────────────────────
+  # OBSERVABILITY
+  # ─────────────────────────────────────────
+
+  prometheus:
+    <<: *service-defaults
+    image: prom/prometheus:v2.48.0
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    <<: *service-defaults
+    image: grafana/grafana:10.2.0
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/observability/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./infra/observability/grafana/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+
+# ─────────────────────────────────────────
+# VOLUMES & NETWORKS
+# ─────────────────────────────────────────
+
+volumes:
+  postgres-data:
+  neo4j-data:
+  neo4j-logs:
+  neo4j-plugins:
+  qdrant-data:
+  redis-data:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-logs:
+  prometheus-data:
+  grafana-data:
+  model-cache:
+
+networks:
+  cognitive-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

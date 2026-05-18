@@ -1,0 +1,9 @@
+id,name,contact_email,phone,address,city,country,tax_id,category,status
+supp-001,MedSupply Corp,orders@medsupply.com,+1-800-555-0120,100 Medical Way,Chicago,US,US-111222333,Pharmaceutical,active
+supp-002,Med Supply Corporation,procurement@med-supply.com,800-555-0120,100 Medical Way Suite 200,Chicago,US,111222333,Pharma,active
+supp-003,TechParts Global,sales@techparts.com,+49-30-555-0140,Berliner Str 42,Berlin,DE,DE-444555666,Electronics,active
+supp-004,ChemBase International,info@chembase.com,+1-973-555-0155,55 Chemistry Drive,Newark,US,US-777888999,Chemicals,active
+supp-005,LogiPro Logistics,ops@logipro.com,+1-469-555-0133,2000 Distribution Center,Dallas,US,US-222333444,Logistics,active
+supp-006,Pacific Steel Works,contracts@pacificsteel.com,+1-503-555-0166,8000 Steel Mill Rd,Portland,US,US-333444555,Manufacturing,active
+supp-007,EcoPackage Solutions,eco@ecopackage.com,+44-121-555-0177,15 Green Street,Birmingham,GB,GB-555666777,Packaging,active
+supp-008,DataDriven Analytics,analytics@ddanalytics.com,+1-628-555-0188,200 Data Center Blvd,San Jose,US,US-888999000,Technology,active
