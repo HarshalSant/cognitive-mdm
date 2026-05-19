@@ -1,5 +1,5 @@
 """
-Agent Registry — manages available autonomous AI agents.
+Agent Registry â€" manages available autonomous AI agents.
 """
 
 from __future__ import annotations

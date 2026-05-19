@@ -4,9 +4,9 @@ Combines vector similarity search + knowledge graph traversal
 to build rich context for LLM-powered copilot queries.
 
 Architecture:
-  1. Query → embed → Qdrant ANN search → candidate entities
-  2. Candidates → Neo4j neighborhood → related entities / relationships
-  3. Combined context → LLM prompt → structured answer
+  1. Query â†' embed â†' Qdrant ANN search â†' candidate entities
+  2. Candidates â†' Neo4j neighborhood â†' related entities / relationships
+  3. Combined context â†' LLM prompt â†' structured answer
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ class RetrievedContext:
 
 
 def _summarize_fields(fields: dict) -> str:
-    """Compact field summary — show at most 3 key-value pairs."""
+    """Compact field summary â€" show at most 3 key-value pairs."""
     skip = {"id", "created_at", "updated_at", "version"}
     items = [(k, v) for k, v in fields.items() if k not in skip and v][:3]
     return ", ".join(f"{k}={v}" for k, v in items)
@@ -119,7 +119,7 @@ class GraphRAGRetriever:
         ctx.total_retrieved = len(entities)
         return ctx
 
-    # ── Private helpers ─────────────────────────────────────────────────────
+    # â"€â"€ Private helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     async def _search_entities(
         self, query: str, entity_type: str | None, top_k: int

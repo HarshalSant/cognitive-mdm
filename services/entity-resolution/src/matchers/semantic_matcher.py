@@ -31,7 +31,7 @@ class SemanticMatch:
     payload: dict[str, Any]
 
 
-# ─── TF-IDF fallback ─────────────────────────────────────────────────────────
+# â"€â"€â"€ TF-IDF fallback â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 def _tokenize(text: str) -> list[str]:
     return [w for w in re.findall(r"\w+", text.lower()) if len(w) > 2]
@@ -56,7 +56,7 @@ def _cosine(v1: dict, v2: dict) -> float:
 
 
 class TFIDFMatcher:
-    """Pure-Python TF-IDF fallback for semantic similarity — no external services."""
+    """Pure-Python TF-IDF fallback for semantic similarity â€" no external services."""
 
     def __init__(self) -> None:
         self._index: dict[str, dict[str, float]] = {}  # entity_id -> tf vector
@@ -114,7 +114,7 @@ class TFIDFMatcher:
         return round(_cosine(v1, v2), 4)
 
 
-# ─── Qdrant-backed matcher (requires Docker) ─────────────────────────────────
+# â"€â"€â"€ Qdrant-backed matcher (requires Docker) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 class SemanticMatcher:
     """

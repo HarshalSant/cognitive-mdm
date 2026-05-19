@@ -6,7 +6,7 @@ from src.matchers.semantic_matcher import TFIDFMatcher
 from src.scoring.survivorship import SurvivorshipEngine
 
 
-# ── Fuzzy matcher ──────────────────────────────────────────────────────────
+# â"€â"€ Fuzzy matcher â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 class TestFuzzyMatcher:
     def setup_method(self):
@@ -41,7 +41,7 @@ class TestFuzzyMatcher:
         assert score >= 0.70
 
 
-# ── TF-IDF semantic matcher ────────────────────────────────────────────────
+# â"€â"€ TF-IDF semantic matcher â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 class TestTFIDFMatcher:
     def setup_method(self):
@@ -100,7 +100,7 @@ class TestTFIDFMatcher:
         assert "s1" not in ids
 
 
-# ── Survivorship engine ────────────────────────────────────────────────────
+# â"€â"€ Survivorship engine â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 class TestSurvivorshipEngine:
     def setup_method(self):

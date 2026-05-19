@@ -18,7 +18,7 @@ logger = structlog.get_logger(__name__)
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 LLM_MODEL = os.environ.get("LLM_MODEL", "claude-sonnet-4-6")
 
-# ─── Rule-based fallback ontology ────────────────────────────────────────────
+# â"€â"€â"€ Rule-based fallback ontology â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 ONTOLOGY_RULES: dict[str, dict[str, list[str]]] = {
     "customer": {
@@ -81,7 +81,7 @@ def _entity_text_for_ontology(entity_type: str, fields: dict[str, Any]) -> str:
 
 
 def infer_class_rule_based(entity_type: str, fields: dict[str, Any]) -> dict[str, Any]:
-    """Rule-based ontology class inference — works without any API key."""
+    """Rule-based ontology class inference â€" works without any API key."""
     text = _entity_text_for_ontology(entity_type, fields)
     rules = ONTOLOGY_RULES.get(entity_type, {})
     best_class, best_score = None, 0
@@ -115,7 +115,7 @@ def infer_class_rule_based(entity_type: str, fields: dict[str, Any]) -> dict[str
     }
 
 
-# ─── LLM-backed generator ─────────────────────────────────────────────────────
+# â"€â"€â"€ LLM-backed generator â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 class OntologyGenerator:
     """

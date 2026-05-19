@@ -1,5 +1,5 @@
 """
-Lineage Tracker — records the full provenance and transformation history of entities.
+Lineage Tracker â€" records the full provenance and transformation history of entities.
 Supports: ingestion, merge, update, schema-alignment, and enrichment operations.
 """
 

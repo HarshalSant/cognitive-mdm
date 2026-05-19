@@ -1,12 +1,12 @@
 """
-Trust Scoring Engine — Multi-Dimensional ML-style Trust Model.
+Trust Scoring Engine â€" Multi-Dimensional ML-style Trust Model.
 
 Dimensions:
-  completeness     (0.30) — required fields present and non-empty
-  consistency      (0.20) — field values agree across sources
-  recency          (0.18) — exponential decay from last update
-  source_reliability (0.22) — weighted trust of originating sources
-  validity         (0.10) — format correctness of key fields
+  completeness     (0.30) â€" required fields present and non-empty
+  consistency      (0.20) â€" field values agree across sources
+  recency          (0.18) â€" exponential decay from last update
+  source_reliability (0.22) â€" weighted trust of originating sources
+  validity         (0.10) â€" format correctness of key fields
 """
 
 from __future__ import annotations
@@ -149,7 +149,7 @@ class TrustScorer:
             dimension_weights=self.weights,
         )
 
-    # ── Dimension implementations ──────────────────────────────────────────
+    # â"€â"€ Dimension implementations â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     def _completeness(self, entity_type: str, fields: dict[str, Any]) -> float:
         required = REQUIRED_FIELDS_BY_TYPE.get(entity_type, ["name"])
@@ -208,10 +208,10 @@ class TrustScorer:
                 if pattern.match(str(val).strip()):
                     passed += 1
         if checks == 0:
-            return 0.80  # No checkable fields — neutral
+            return 0.80  # No checkable fields â€" neutral
         return passed / checks
 
-    # ── Batch scoring ──────────────────────────────────────────────────────
+    # â"€â"€ Batch scoring â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     def compute_batch(
         self,
@@ -232,7 +232,7 @@ class TrustScorer:
             results.append(self.compute(eid, etype, fields, sources, updated))
         return results
 
-    # ── Anomaly detection ─────────────────────────────────────────────────
+    # â"€â"€ Anomaly detection â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     def detect_trust_anomalies(
         self,

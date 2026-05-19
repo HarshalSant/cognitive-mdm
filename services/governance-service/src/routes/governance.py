@@ -37,7 +37,7 @@ async def get_trust_score(
     )
     row = result.mappings().first()
     if not row:
-        raise HTTPException(status_code=404, detail="Trust score not found — run /scan first")
+        raise HTTPException(status_code=404, detail="Trust score not found -- run /scan first")
     return dict(row)
 
 

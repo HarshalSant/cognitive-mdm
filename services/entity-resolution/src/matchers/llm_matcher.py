@@ -1,7 +1,7 @@
 """
 LLM-assisted entity matching using Anthropic Claude.
 Used for high-confidence confirmation and complex disambiguation cases
-where fuzzy and semantic matching are ambiguous (0.6–0.85 confidence zone).
+where fuzzy and semantic matching are ambiguous (0.6â€"0.85 confidence zone).
 """
 
 from __future__ import annotations
@@ -92,7 +92,7 @@ class LLMMatcher:
             return LLMMatchDecision(
                 is_duplicate=prior_score >= 0.85,
                 confidence=prior_score,
-                reasoning="LLM matching unavailable — using prior score",
+                reasoning="LLM matching unavailable -- using prior score",
                 matching_evidence=[],
                 distinguishing_evidence=[],
                 recommendation="review" if 0.6 <= prior_score < 0.85 else (

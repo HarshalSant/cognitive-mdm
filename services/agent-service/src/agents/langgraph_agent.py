@@ -1,6 +1,6 @@
 """
 LangGraph-based autonomous MDM agent.
-Implements a ReAct loop: Reason → Act → Observe → Repeat.
+Implements a ReAct loop: Reason â†' Act â†' Observe â†' Repeat.
 """
 
 from __future__ import annotations

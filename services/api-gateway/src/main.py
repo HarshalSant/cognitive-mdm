@@ -56,7 +56,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ─── Middleware ───────────────────────────────────────────────
+# â"€â"€â"€ Middleware â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(
@@ -89,7 +89,7 @@ async def telemetry_middleware(request: Request, call_next) -> Response:
     return response
 
 
-# ─── Routes ──────────────────────────────────────────────────
+# â"€â"€â"€ Routes â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(entities.router, prefix="/api/v1/entities", tags=["entities"])
