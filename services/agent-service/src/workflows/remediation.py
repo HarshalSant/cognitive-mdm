@@ -3,11 +3,11 @@ Remediation Workflow.
 Multi-step automated workflow for entity deduplication remediation.
 
 Stages:
-  1. scan   â€" find all duplicate candidates above threshold
-  2. cluster â€" group overlapping pairs into deduplication clusters
-  3. rank   â€" score each cluster by confidence and impact
-  4. act    â€" auto-merge high-confidence, queue medium, flag low
-  5. report â€" emit summary event
+  1. scan   -- find all duplicate candidates above threshold
+  2. cluster -- group overlapping pairs into deduplication clusters
+  3. rank   -- score each cluster by confidence and impact
+  4. act    -- auto-merge high-confidence, queue medium, flag low
+  5. report -- emit summary event
 """
 
 from __future__ import annotations

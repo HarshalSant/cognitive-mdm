@@ -65,5 +65,5 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return response
 
         except Exception:
-            # Fail open on Redis errors â€" don't block traffic
+            # Fail open on Redis errors -- don't block traffic
             return await call_next(request)

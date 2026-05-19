@@ -59,7 +59,7 @@ class RetrievedContext:
 
 
 def _summarize_fields(fields: dict) -> str:
-    """Compact field summary â€" show at most 3 key-value pairs."""
+    """Compact field summary -- show at most 3 key-value pairs."""
     skip = {"id", "created_at", "updated_at", "version"}
     items = [(k, v) for k, v in fields.items() if k not in skip and v][:3]
     return ", ".join(f"{k}={v}" for k, v in items)

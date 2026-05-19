@@ -1,12 +1,12 @@
 """
-Trust Scoring Engine â€" Multi-Dimensional ML-style Trust Model.
+Trust Scoring Engine -- Multi-Dimensional ML-style Trust Model.
 
 Dimensions:
-  completeness     (0.30) â€" required fields present and non-empty
-  consistency      (0.20) â€" field values agree across sources
-  recency          (0.18) â€" exponential decay from last update
-  source_reliability (0.22) â€" weighted trust of originating sources
-  validity         (0.10) â€" format correctness of key fields
+  completeness     (0.30) -- required fields present and non-empty
+  consistency      (0.20) -- field values agree across sources
+  recency          (0.18) -- exponential decay from last update
+  source_reliability (0.22) -- weighted trust of originating sources
+  validity         (0.10) -- format correctness of key fields
 """
 
 from __future__ import annotations
@@ -208,7 +208,7 @@ class TrustScorer:
                 if pattern.match(str(val).strip()):
                     passed += 1
         if checks == 0:
-            return 0.80  # No checkable fields â€" neutral
+            return 0.80  # No checkable fields -- neutral
         return passed / checks
 
     # â"€â"€ Batch scoring â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€

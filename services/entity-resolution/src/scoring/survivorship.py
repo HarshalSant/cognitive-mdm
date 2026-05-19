@@ -1,5 +1,5 @@
 """
-Survivorship Engine â€" selects the best field value when merging multiple entity records.
+Survivorship Engine -- selects the best field value when merging multiple entity records.
 
 Strategy hierarchy (per field):
   1. Custom rule if defined

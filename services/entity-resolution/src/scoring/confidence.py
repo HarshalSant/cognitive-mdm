@@ -48,7 +48,7 @@ class ConfidenceScorer:
             llm_score: LLM confidence, None if not used
             matching_field_count: Fields with high similarity
             total_field_count: Total comparable fields
-            same_source: Records from same source (slight penalty â€" likely already deduped there)
+            same_source: Records from same source (slight penalty -- likely already deduped there)
         """
         if llm_score is not None:
             base = (

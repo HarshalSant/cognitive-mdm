@@ -1,5 +1,5 @@
 """
-Core Resolution Engine â€" orchestrates multi-stage entity deduplication.
+Core Resolution Engine -- orchestrates multi-stage entity deduplication.
 
 Pipeline:
   1. Blocking (candidate generation via inverted index / LSH)
@@ -167,9 +167,9 @@ class ResolutionEngine:
         # Sort by confidence descending
         candidates.sort(key=lambda c: c.confidence, reverse=True)
 
-        # Stage 4: Survivorship â€" build golden record
+        # Stage 4: Survivorship -- build golden record
         if candidates and candidates[0].confidence >= AUTO_MERGE_THRESHOLD:
-            # High confidence â€" compute golden record
+            # High confidence -- compute golden record
             all_field_sets = [fields] + [c.fields for c in candidates[:5]]
             survivorship_map = self.survivorship.compute_golden_record(
                 field_sets=all_field_sets,
@@ -180,7 +180,7 @@ class ResolutionEngine:
             overall_confidence = candidates[0].confidence
             reasoning = f"Auto-merged: {candidates[0].rationale}"
         else:
-            # No high-confidence match â€" this entity becomes its own golden record
+            # No high-confidence match -- this entity becomes its own golden record
             survivorship_map = fields
             golden_id = entity_id
             is_new = True

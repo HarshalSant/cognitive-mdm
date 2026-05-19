@@ -56,7 +56,7 @@ def _cosine(v1: dict, v2: dict) -> float:
 
 
 class TFIDFMatcher:
-    """Pure-Python TF-IDF fallback for semantic similarity â€" no external services."""
+    """Pure-Python TF-IDF fallback for semantic similarity -- no external services."""
 
     def __init__(self) -> None:
         self._index: dict[str, dict[str, float]] = {}  # entity_id -> tf vector

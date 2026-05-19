@@ -1,5 +1,5 @@
 """
-Entity CRUD and search routes â€" proxies to entity-resolution service.
+Entity CRUD and search routes -- proxies to entity-resolution service.
 """
 
 from __future__ import annotations

@@ -81,7 +81,7 @@ def _entity_text_for_ontology(entity_type: str, fields: dict[str, Any]) -> str:
 
 
 def infer_class_rule_based(entity_type: str, fields: dict[str, Any]) -> dict[str, Any]:
-    """Rule-based ontology class inference â€" works without any API key."""
+    """Rule-based ontology class inference -- works without any API key."""
     text = _entity_text_for_ontology(entity_type, fields)
     rules = ONTOLOGY_RULES.get(entity_type, {})
     best_class, best_score = None, 0
