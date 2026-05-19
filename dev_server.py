@@ -1301,7 +1301,7 @@ def _graphrag_answer(q: str) -> str:
                     if s >= 0.75:
                         n1 = e1.get("fields", {}).get("name", eids[i][:8])
                         n2 = e2.get("fields", {}).get("name", eids[j][:8])
-                        pairs.append(f"  • {n1} ↔ {n2} ({s:.0%} match, {e1.get('entity_type')})")
+                        pairs.append(f"  * {n1} <-> {n2} ({s:.0%} match, {e1.get('entity_type')})")
         pending_q = sum(1 for i in _remediation_queue.values() if i.get("status") == "pending")
         if pairs:
             out = f"Found {len(pairs)} potential duplicate pairs:\n" + "\n".join(pairs[:10])
