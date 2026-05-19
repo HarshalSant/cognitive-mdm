@@ -1,0 +1,112 @@
+{
+  "id": null,
+  "uid": "cognitive-mdm-overview",
+  "title": "CognitiveMDM — Platform Overview",
+  "tags": ["cognitive-mdm", "mdm"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total[2m])) by (service)",
+          "legendFormat": "{{service}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "HTTP Latency P95 (ms)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[2m])) by (le, service)) * 1000",
+          "legendFormat": "{{service}} p95"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Error Rate (%)",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 8, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "100 * sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m]))",
+          "legendFormat": "Error %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              { "value": 0, "color": "green" },
+              { "value": 1, "color": "yellow" },
+              { "value": 5, "color": "red" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Active Services",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 8, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "count(up{job=~\"api-gateway|entity-resolution|governance-service|agent-service|copilot-service|ingestion-service|semantic-engine|graph-service\"} == 1)",
+          "legendFormat": "Services Up"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "value": 0, "color": "red" },
+              { "value": 6, "color": "yellow" },
+              { "value": 8, "color": "green" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Entity Resolution — Matches/s",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(mdm_entity_resolutions_total[2m])",
+          "legendFormat": "Resolutions/s"
+        },
+        {
+          "expr": "rate(mdm_entity_merges_total[2m])",
+          "legendFormat": "Merges/s"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Governance — Violations by Severity",
+      "type": "piechart",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "mdm_governance_violations_total",
+          "legendFormat": "{{severity}}"
+        }
+      ]
+    }
+  ],
+  "time": { "from": "now-1h", "to": "now" }
+}

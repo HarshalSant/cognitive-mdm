@@ -1,0 +1,76 @@
+{{- $root := . -}}
+{{- $registry := .Values.global.imageRegistry -}}
+{{- $tag := .Values.global.imageTag -}}
+{{- $pullPolicy := .Values.global.imagePullPolicy -}}
+
+{{- range $svcKey, $svc := dict
+    "api-gateway"        .Values.apiGateway
+    "ingestion-service"  .Values.ingestionService
+    "entity-resolution"  .Values.entityResolution
+    "semantic-engine"    .Values.semanticEngine
+    "graph-service"      .Values.graphService
+    "governance-service" .Values.governanceService
+    "agent-service"      .Values.agentService
+    "copilot-service"    .Values.copilotService
+}}
+{{- if $svc.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $svcKey }}
+  namespace: {{ $root.Values.global.namespace }}
+  labels:
+    app: {{ $svcKey }}
+    app.kubernetes.io/name: {{ $svcKey }}
+    app.kubernetes.io/part-of: cognitive-mdm
+    app.kubernetes.io/version: {{ $root.Chart.AppVersion }}
+spec:
+  replicas: {{ $svc.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $svcKey }}
+  template:
+    metadata:
+      labels:
+        app: {{ $svcKey }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ $svc.port }}"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: {{ $svcKey }}
+        image: {{ $registry }}/{{ $svc.image }}:{{ $tag }}
+        imagePullPolicy: {{ $pullPolicy }}
+        ports:
+        - containerPort: {{ $svc.port }}
+          name: http
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: {{ $svc.port }}
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: {{ $svc.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: {{ $svc.resources.requests.cpu | quote }}
+            memory: {{ $svc.resources.requests.memory | quote }}
+          limits:
+            cpu: {{ $svc.resources.limits.cpu | quote }}
+            memory: {{ $svc.resources.limits.memory | quote }}
+{{- end }}
+{{- end }}

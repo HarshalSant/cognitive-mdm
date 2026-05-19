@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cognitive-mdm-config
+  namespace: cognitive-mdm
+data:
+  # Service discovery
+  ENTITY_RESOLUTION_URL: "http://entity-resolution:8002"
+  SEMANTIC_ENGINE_URL: "http://semantic-engine:8003"
+  GRAPH_SERVICE_URL: "http://graph-service:8004"
+  GOVERNANCE_SERVICE_URL: "http://governance-service:8005"
+  AGENT_SERVICE_URL: "http://agent-service:8006"
+  COPILOT_SERVICE_URL: "http://copilot-service:8007"
+  INGESTION_SERVICE_URL: "http://ingestion-service:8001"
+
+  # Infrastructure
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "cognitive_mdm"
+  NEO4J_URI: "bolt://neo4j:7687"
+  QDRANT_HOST: "qdrant"
+  QDRANT_PORT: "6333"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  REDIS_URL: "redis://redis:6379/0"
+
+  # ML
+  EMBEDDING_MODEL: "sentence-transformers/all-mpnet-base-v2"
+  EMBEDDING_DIM: "768"
+  LLM_MODEL: "claude-sonnet-4-6"
+
+  # Thresholds
+  AUTO_MERGE_THRESHOLD: "0.95"
+  REVIEW_THRESHOLD: "0.80"
+  TRUST_MIN_THRESHOLD: "0.50"

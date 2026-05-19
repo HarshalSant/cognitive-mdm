@@ -1,0 +1,120 @@
+# Default values for cognitive-mdm Helm chart.
+
+global:
+  imageRegistry: "ghcr.io/harshalsant/cognitive-mdm"
+  imageTag: "latest"
+  imagePullPolicy: IfNotPresent
+  namespace: cognitive-mdm
+
+# ─── Service replicas and resources ────────────────────────────────────────
+
+apiGateway:
+  enabled: true
+  replicas: 2
+  image: api-gateway
+  port: 8000
+  resources:
+    requests: { cpu: "100m", memory: "128Mi" }
+    limits: { cpu: "500m", memory: "512Mi" }
+
+ingestionService:
+  enabled: true
+  replicas: 2
+  image: ingestion-service
+  port: 8001
+  resources:
+    requests: { cpu: "100m", memory: "256Mi" }
+    limits: { cpu: "500m", memory: "1Gi" }
+
+entityResolution:
+  enabled: true
+  replicas: 2
+  image: entity-resolution
+  port: 8002
+  resources:
+    requests: { cpu: "250m", memory: "512Mi" }
+    limits: { cpu: "1000m", memory: "2Gi" }
+
+semanticEngine:
+  enabled: true
+  replicas: 1
+  image: semantic-engine
+  port: 8003
+  resources:
+    requests: { cpu: "500m", memory: "1Gi" }
+    limits: { cpu: "2000m", memory: "4Gi" }
+
+graphService:
+  enabled: true
+  replicas: 1
+  image: graph-service
+  port: 8004
+  resources:
+    requests: { cpu: "100m", memory: "256Mi" }
+    limits: { cpu: "500m", memory: "1Gi" }
+
+governanceService:
+  enabled: true
+  replicas: 2
+  image: governance-service
+  port: 8005
+  resources:
+    requests: { cpu: "100m", memory: "256Mi" }
+    limits: { cpu: "500m", memory: "512Mi" }
+
+agentService:
+  enabled: true
+  replicas: 1
+  image: agent-service
+  port: 8006
+  resources:
+    requests: { cpu: "250m", memory: "512Mi" }
+    limits: { cpu: "1000m", memory: "2Gi" }
+
+copilotService:
+  enabled: true
+  replicas: 1
+  image: copilot-service
+  port: 8007
+  resources:
+    requests: { cpu: "250m", memory: "512Mi" }
+    limits: { cpu: "1000m", memory: "2Gi" }
+
+# ─── Infrastructure ─────────────────────────────────────────────────────────
+
+postgres:
+  host: postgres
+  port: 5432
+  database: cognitive_mdm
+
+neo4j:
+  uri: bolt://neo4j:7687
+
+qdrant:
+  host: qdrant
+  port: 6333
+
+kafka:
+  bootstrapServers: kafka:9092
+
+redis:
+  url: redis://redis:6379/0
+
+# ─── ML configuration ───────────────────────────────────────────────────────
+
+ml:
+  embeddingModel: "sentence-transformers/all-mpnet-base-v2"
+  embeddingDim: 768
+  llmModel: "claude-sonnet-4-6"
+  autoMergeThreshold: 0.95
+  reviewThreshold: 0.80
+  trustMinThreshold: 0.50
+
+# ─── Secrets (override in production via --set or external secrets) ─────────
+
+secrets:
+  postgresUser: "mdm_user"
+  postgresPassword: ""       # required — set via --set secrets.postgresPassword=...
+  neo4jPassword: ""          # required
+  anthropicApiKey: ""        # required for LLM features
+  jwtSecretKey: ""           # required — min 32 chars

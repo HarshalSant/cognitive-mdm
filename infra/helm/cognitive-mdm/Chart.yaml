@@ -1,0 +1,14 @@
+apiVersion: v2
+name: cognitive-mdm
+description: AI-Native Master Data Management Platform
+type: application
+version: 2.0.0
+appVersion: "2.0.0"
+keywords:
+  - mdm
+  - ai
+  - data-management
+  - knowledge-graph
+maintainers:
+  - name: CognitiveMDM Team
+    url: https://github.com/HarshalSant/cognitive-mdm

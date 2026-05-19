@@ -1,0 +1,342 @@
+---
+# API Gateway
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: cognitive-mdm
+  labels:
+    app: api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: ghcr.io/harshalsant/cognitive-mdm/api-gateway:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+# Entity Resolution
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: entity-resolution
+  namespace: cognitive-mdm
+  labels:
+    app: entity-resolution
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: entity-resolution
+  template:
+    metadata:
+      labels:
+        app: entity-resolution
+    spec:
+      containers:
+      - name: entity-resolution
+        image: ghcr.io/harshalsant/cognitive-mdm/entity-resolution:latest
+        ports:
+        - containerPort: 8002
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8002
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "2Gi"
+---
+# Ingestion Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingestion-service
+  namespace: cognitive-mdm
+  labels:
+    app: ingestion-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ingestion-service
+  template:
+    metadata:
+      labels:
+        app: ingestion-service
+    spec:
+      containers:
+      - name: ingestion-service
+        image: ghcr.io/harshalsant/cognitive-mdm/ingestion-service:latest
+        ports:
+        - containerPort: 8001
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8001
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+---
+# Semantic Engine
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: semantic-engine
+  namespace: cognitive-mdm
+  labels:
+    app: semantic-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: semantic-engine
+  template:
+    metadata:
+      labels:
+        app: semantic-engine
+    spec:
+      containers:
+      - name: semantic-engine
+        image: ghcr.io/harshalsant/cognitive-mdm/semantic-engine:latest
+        ports:
+        - containerPort: 8003
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8003
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "2000m"
+            memory: "4Gi"
+---
+# Graph Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graph-service
+  namespace: cognitive-mdm
+  labels:
+    app: graph-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graph-service
+  template:
+    metadata:
+      labels:
+        app: graph-service
+    spec:
+      containers:
+      - name: graph-service
+        image: ghcr.io/harshalsant/cognitive-mdm/graph-service:latest
+        ports:
+        - containerPort: 8004
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8004
+          initialDelaySeconds: 15
+          periodSeconds: 15
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+---
+# Governance Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governance-service
+  namespace: cognitive-mdm
+  labels:
+    app: governance-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: governance-service
+  template:
+    metadata:
+      labels:
+        app: governance-service
+    spec:
+      containers:
+      - name: governance-service
+        image: ghcr.io/harshalsant/cognitive-mdm/governance-service:latest
+        ports:
+        - containerPort: 8005
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8005
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+# Agent Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-service
+  namespace: cognitive-mdm
+  labels:
+    app: agent-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent-service
+  template:
+    metadata:
+      labels:
+        app: agent-service
+    spec:
+      containers:
+      - name: agent-service
+        image: ghcr.io/harshalsant/cognitive-mdm/agent-service:latest
+        ports:
+        - containerPort: 8006
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8006
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "2Gi"
+---
+# Copilot Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: copilot-service
+  namespace: cognitive-mdm
+  labels:
+    app: copilot-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: copilot-service
+  template:
+    metadata:
+      labels:
+        app: copilot-service
+    spec:
+      containers:
+      - name: copilot-service
+        image: ghcr.io/harshalsant/cognitive-mdm/copilot-service:latest
+        ports:
+        - containerPort: 8007
+        envFrom:
+        - configMapRef:
+            name: cognitive-mdm-config
+        - secretRef:
+            name: cognitive-mdm-secrets
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8007
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "2Gi"

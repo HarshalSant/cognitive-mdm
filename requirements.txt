@@ -1,0 +1,21 @@
+# Dev server + shared dependencies (no Docker required)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+jellyfish==1.1.0
+rapidfuzz==3.10.0
+python-multipart==0.0.12
+pydantic==2.9.2
+
+# Optional: LLM-powered features (set ANTHROPIC_API_KEY)
+anthropic==0.34.2
+
+# Optional: semantic matching with sentence-transformers (heavy install)
+# sentence-transformers==3.2.1
+# numpy==1.26.4
+
+# Dev tools
+pytest==8.3.3
+pytest-asyncio==0.24.0
+ruff==0.7.0
+mypy==1.11.2
+httpx==0.27.2

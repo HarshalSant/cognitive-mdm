@@ -1,0 +1,70 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: cognitive-mdm
+    env: development
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files: []
+
+scrape_configs:
+  # ── CognitiveMDM Services ──────────────────────────────────────────────
+
+  - job_name: api-gateway
+    static_configs:
+      - targets: ['api-gateway:8000']
+    metrics_path: /metrics
+
+  - job_name: ingestion-service
+    static_configs:
+      - targets: ['ingestion-service:8001']
+    metrics_path: /metrics
+
+  - job_name: entity-resolution
+    static_configs:
+      - targets: ['entity-resolution:8002']
+    metrics_path: /metrics
+
+  - job_name: semantic-engine
+    static_configs:
+      - targets: ['semantic-engine:8003']
+    metrics_path: /metrics
+
+  - job_name: graph-service
+    static_configs:
+      - targets: ['graph-service:8004']
+    metrics_path: /metrics
+
+  - job_name: governance-service
+    static_configs:
+      - targets: ['governance-service:8005']
+    metrics_path: /metrics
+
+  - job_name: agent-service
+    static_configs:
+      - targets: ['agent-service:8006']
+    metrics_path: /metrics
+
+  - job_name: copilot-service
+    static_configs:
+      - targets: ['copilot-service:8007']
+    metrics_path: /metrics
+
+  # ── Infrastructure ─────────────────────────────────────────────────────
+
+  - job_name: postgres
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  - job_name: kafka
+    static_configs:
+      - targets: ['kafka:9308']
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
