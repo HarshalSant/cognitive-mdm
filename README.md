@@ -2,7 +2,7 @@
 
 > AI-Native Master Data Management Platform — Enterprise Semantic Intelligence, Autonomous Data Stewardship, and Knowledge Graph Engine
 
-[![CI](https://github.com/org/cognitive-mdm/actions/workflows/ci.yml/badge.svg)](https://github.com/org/cognitive-mdm/actions)
+[![CI](https://github.com/HarshalSant/cognitive-mdm/actions/workflows/ci.yml/badge.svg)](https://github.com/HarshalSant/cognitive-mdm/actions)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ---
@@ -117,13 +117,57 @@ make proto
 
 ---
 
+## Dev Server (No Docker Required)
+
+Run the entire platform in a single process with in-memory storage — no databases or Docker needed:
+
+```bash
+pip install fastapi uvicorn jellyfish rapidfuzz python-multipart
+python dev_server.py
+# Dashboard: http://localhost:9000
+# API Docs:  http://localhost:9000/docs
+```
+
+Seed sample data:
+```bash
+python scripts/seed.py   # loads customers.csv + suppliers.csv
+```
+
+---
+
 ## Phase Roadmap
 
 | Phase | Status | Features |
 |-------|--------|---------|
-| Phase 1 | In Progress | Ingestion, Graph Foundation, Entity Resolution MVP, Semantic Search, Graph Viz |
-| Phase 2 | Planned | Ontology Engine, Governance Intelligence, Trust Scoring, Lineage Tracking |
-| Phase 3 | Planned | Autonomous Agents, Remediation Engine, Enterprise Copilot, Predictive Intelligence |
+| Phase 1 | **Complete** | Ingestion, Entity Resolution, TF-IDF Semantic Search, Multi-signal Duplicate Detection, Entity Merge with Survivorship, Full Lineage Tracking, Version History |
+| Phase 2 | **Complete** | Ontology Inference (rule-based + LLM), Data Quality Scoring (completeness/validity/uniqueness/timeliness), Advanced Governance (5 policy types, auto-remediation), ML-style Multi-dimensional Trust Scoring |
+| Phase 3 | **Complete** | Autonomous Agent Workflows (4 agent types), Human-in-the-Loop Remediation Queue, GraphRAG Copilot (TF-IDF retrieval + graph context), Predictive Analytics, Auto-merge Engine |
+
+### What's running in Dev Mode
+
+All three phases are active in `dev_server.py`:
+
+- **Entity Resolution** — Jaro-Winkler fuzzy + TF-IDF semantic combined scoring, blocking-based deduplication clusters, O(n²) pairwise comparison
+- **Semantic Search** — TF-IDF cosine similarity over entity fields, no external vector DB required
+- **Lineage** — per-entity operation history (ingested → updated → merged), merge provenance chains
+- **Ontology** — keyword-rule-based class inference (20+ classes), LLM-backed when `ANTHROPIC_API_KEY` is set
+- **Trust Scoring** — 5-dimension model: completeness (30%), source reliability (22%), consistency (20%), recency (18%), validity (10%)
+- **Data Quality** — A–F grading: completeness + validity + uniqueness + timeliness
+- **Governance** — 5 policy types, PII regex detection, violation auto-remediation
+- **Agents** — `duplicate_remediator` (auto-merge + queue), `trust_recalculator`, `pii_scanner`, `metadata_enricher`
+- **Remediation Queue** — approve/reject merge proposals with audit trail
+- **GraphRAG Copilot** — intent detection + TF-IDF retrieval + graph context + structured answers
+- **Analytics** — entity stats, trust tiers, duplicate density, quality grades
+
+### Full Production Stack (Docker)
+
+```bash
+# Requires Docker Desktop
+make dev-up     # PostgreSQL + Neo4j + Qdrant + Kafka + all 8 services
+make seed       # load sample data
+```
+
+Adds: persistent storage, Neo4j knowledge graph, Qdrant vector search (sentence-transformers), Kafka event streaming, LangGraph agents with ANTHROPIC_API_KEY.
 
 ---
 
