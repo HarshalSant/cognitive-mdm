@@ -1,0 +1,15 @@
+apiVersion: v2
+name: intelligent-pipeline
+description: IntelliPipeline -- AI-Native CI/CD Autopilot
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - cicd
+  - devops
+  - security
+  - ai
+  - kubernetes
+home: https://github.com/HarshalSant/cognitive-mdm
+maintainers:
+  - name: IntelliPipeline Team

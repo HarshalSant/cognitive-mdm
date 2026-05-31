@@ -1,0 +1,61 @@
+replicaCount: 2
+
+image:
+  repository: intellipipeline
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 9001
+
+ingress:
+  enabled: false
+  className: nginx
+  host: intellipipeline.example.com
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 9001
+  initialDelaySeconds: 10
+  periodSeconds: 30
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 9001
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+config:
+  logLevel: INFO
+  riskAutoDeployMax: "30"
+  riskCanaryMax: "65"
+  riskBlockMin: "85"
+
+secrets:
+  anthropicApiKey: ""
+  githubToken: ""
+  gitlabToken: ""
+  githubWebhookSecret: ""
